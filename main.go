@@ -15,95 +15,13 @@ var TYPE_STAR = "STAR"
 var TYPE_PLANET = "PLANET"
 var TYPE_TRIANGLE = "TRIANGLE"
 
+var DIRECTION_WEST = "WEST"
+var DIRECTION_EAST = "EAST"
+var DIRECTION_NORTH = "NORTH"
+var DIRECTION_SOUTH = "SOUTH"
+
 var TargetColor = COLOR_GREEN
 var TargetType = TYPE_MOON
-
-// type Node struct {
-//     Depth       int
-//     BlueRobot   GameResources.Robot
-//     RedRobot    GameResources.Robot
-//     YellowRobot GameResources.Robot
-//     GreenRobot  GameResources.Robot
-//     GameMap     [][]GameResources.GameTile
-//     ParentNode  *Node
-//     Child       []Node
-// }
-//
-// func (node *Node) AddChild(child Node) {
-//     node.Child = append(node.Child, child)
-// }
-//
-// func (node *Node) MoveRobots(queue *Queue) (*Node, int) {
-//     tempNode := *node
-//     if tempNode.GreenRobot.MoveWest(tempNode.GameMap) {
-//         tempNode.Depth = node.Depth + 1
-//         if tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Type == TargetType &&
-//             tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Color == TargetColor {
-//             return &tempNode, tempNode.Depth
-//         }
-//         tempNode.ParentNode = node
-//         node.AddChild(tempNode)
-//         queue.Push(tempNode)
-//     }
-//     tempNode = *node
-//     if tempNode.GreenRobot.MoveEast(tempNode.GameMap) {
-//         tempNode.Depth = node.Depth + 1
-//         if tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Type == TargetType &&
-//             tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Color == TargetColor {
-//             return &tempNode, tempNode.Depth
-//         }
-//         tempNode.ParentNode = node
-//         node.AddChild(tempNode)
-//         queue.Push(tempNode)
-//     }
-//     tempNode = *node
-//     if tempNode.GreenRobot.MoveNorth(tempNode.GameMap) {
-//         tempNode.Depth = node.Depth + 1
-//         if tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Type == TargetType &&
-//             tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Color == TargetColor {
-//             return &tempNode, tempNode.Depth
-//         }
-//         tempNode.ParentNode = node
-//         node.AddChild(tempNode)
-//         queue.Push(tempNode)
-//     }
-//     tempNode = *node
-//     if tempNode.GreenRobot.MoveSouth(tempNode) {
-//         tempNode.Depth = node.Depth + 1
-//         fmt.Println("SOUTH")
-//         fmt.Println("DEPTH")
-//         fmt.Println(node.Depth)
-//         fmt.Println(tempNode.Depth)
-//         fmt.Println(tempNode.BlueRobot.XPosition)
-//         fmt.Println(tempNode.BlueRobot.YPosition)
-//         fmt.Println(tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition])
-//         fmt.Println(tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Type == TargetType)
-//         fmt.Println(tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Color == TargetColor)
-//         if tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Type == TargetType &&
-//             tempNode.GameMap[tempNode.BlueRobot.XPosition][tempNode.BlueRobot.YPosition].Color == TargetColor {
-//             return &tempNode, tempNode.Depth
-//         }
-//         tempNode.ParentNode = node
-//         node.AddChild(tempNode)
-//         queue.Push(tempNode)
-//     }
-//     return nil, 0
-// }
-//
-// type Queue struct {
-//     Nodes []Node
-// }
-//
-// func (queue *Queue) Push(node Node) {
-//     queue.Nodes = append(queue.Nodes, node)
-// }
-//
-// func (queue *Queue) Pop() Node {
-//     var x Node
-//     x = queue.Nodes[0]
-//     queue.Nodes = queue.Nodes[1:]
-//     return x
-// }
 
 func main() {
 	var queue GameResources.Queue
@@ -124,101 +42,51 @@ func main() {
 	*/
 
 	var defaultChild []GameResources.Node
-	var startNode = GameResources.Node{0, blueRobot, redRobot, yellowRobot, greenRobot, newMap, nil, defaultChild}
-	node, depth := startNode.MoveRobots(&queue)
-	// fmt.Println(node)
-	fmt.Println(depth)
-	// fmt.Println(node.ParentNode)
-	fmt.Println(node.Depth)
-	fmt.Println(node.ParentNode.Depth)
-	nn := node
+	var startNode = GameResources.Node{0, blueRobot, redRobot, yellowRobot, greenRobot, newMap, nil, defaultChild, "", ""}
+	var node *GameResources.Node
+	var depth int
 	for {
-		fmt.Println("HISTORY")
-		fmt.Println(nn.BlueRobot.XPosition, nn.BlueRobot.YPosition)
-		fmt.Println(nn.RedRobot.XPosition, nn.RedRobot.YPosition)
-		fmt.Println(nn.YellowRobot.XPosition, nn.YellowRobot.YPosition)
-		fmt.Println(nn.GreenRobot.XPosition, nn.GreenRobot.YPosition)
-		if nn.ParentNode == nil {
-			fmt.Println("PARENT NIL")
+		findNode, moveCount := startNode.MoveRobots(&queue)
+		// fmt.Println(len(queue.Nodes))
+		// if count == 6 {
+		//     for i := 0; i < len(queue.Nodes); i++ {
+		//         queue.Nodes[i].PrintCurrentPosition()
+		//     }
+		// }
+		// if count == 6 {
+		//     queue.Nodes[0].PrintCurrentPosition()
+		//     fmt.Println("-------------------------------")
+		// }
+		// if count == 7 {
+		//     queue.Nodes[0].PrintCurrentPosition()
+		//     fmt.Println("-------------------------------")
+		// }
+		// if count == 8 {
+		//     queue.Nodes[0].PrintCurrentPosition()
+		//     fmt.Println("-------------------------------")
+		// }
+		// fmt.Println(findNode)
+		if findNode != nil {
+			node = findNode
+			depth = moveCount
 			break
 		}
-		nn = node.ParentNode
 	}
-	// var tempNode = startNode
-	// if tempNode.BlueRobot.MoveWest(tempNode.GameMap) {
-	//     tempNode.ParentNode = &startNode
-	//     startNode.AddChild(tempNode)
-	//     queue.Push(tempNode)
+	fmt.Println(node.Depth)
+	// nn := node
+	// for {
+	//     fmt.Println("HISTORY")
+	//     fmt.Println(nn.BlueRobot.XPosition, nn.BlueRobot.YPosition)
+	//     fmt.Println(nn.RedRobot.XPosition, nn.RedRobot.YPosition)
+	//     fmt.Println(nn.YellowRobot.XPosition, nn.YellowRobot.YPosition)
+	//     fmt.Println(nn.GreenRobot.XPosition, nn.GreenRobot.YPosition)
+	//     if nn.ParentNode == nil {
+	//         fmt.Println("PARENT NIL")
+	//         break
+	//     }
+	//     nn = nn.ParentNode
 	// }
-	// tempNode = startNode
-	// if tempNode.BlueRobot.MoveEast(tempNode.GameMap) {
-	//     tempNode.ParentNode = &startNode
-	//     startNode.AddChild(tempNode)
-	//     queue.Push(tempNode)
-	// }
-	// tempNode = startNode
-	// if tempNode.BlueRobot.MoveNorth(tempNode.GameMap) {
-	//     tempNode.ParentNode = &startNode
-	//     startNode.AddChild(tempNode)
-	//     queue.Push(tempNode)
-	// }
-	// tempNode = startNode
-	// if tempNode.BlueRobot.MoveSouth(tempNode.GameMap) {
-	//     tempNode.ParentNode = &startNode
-	//     startNode.AddChild(tempNode)
-	//     queue.Push(tempNode)
-	// }
-	// fmt.Println(startNode)
-	// fmt.Println(len(startNode.Child))
-	// fmt.Println(startNode.Child[0])
-	// fmt.Println(startNode.Child[0].GameMap[1][1])
-	// fmt.Println(startNode.Child[0].GameMap[1][0])
-	// fmt.Println(startNode.Child[1].BlueRobot)
-	// fmt.Println(startNode.Child[1].GameMap[1][1])
-	// fmt.Println(startNode.Child[1].GameMap[1][4])
-	// fmt.Println(startNode.Child[2].BlueRobot)
-	// fmt.Println(startNode.Child[2].GameMap[1][1])
-	// fmt.Println(startNode.Child[2].GameMap[0][1])
-	// fmt.Println(startNode.Child[3].BlueRobot)
-	// fmt.Println(startNode.Child[3].GameMap[1][1])
-	// fmt.Println(startNode.Child[3].GameMap[5][1])
-
-	// fmt.Println(queue)
-
-	///////////////////////////////////
-
-	// queue.Push(startNode)
-	// var nextNode = queue.Pop()
-	// fmt.Println(nextNode.Depth)
-	// nextNode.BlueRobot.MoveWest(nextNode.GameMap)
-	// nextNode.BlueRobot.MoveEast(nextNode.GameMap)
-	// nextNode.BlueRobot.MoveNorth(nextNode.GameMap)
-	// nextNode.BlueRobot.MoveSouth(nextNode.GameMap)
-
-	// var defaultChild2 []Node
-	// var ssn = Node{1, defaultChild2}
-	// startNode.AddChild(ssn)
-	// fmt.Println(startNode)
-
-	// fmt.Println("-----------------")
-	// fmt.Println(newMap[11][11])
-	// fmt.Println(blueRobot)
-	// fmt.Println(redRobot)
-	// fmt.Println(yellowRobot)
-	// fmt.Println(greenRobot)
-	// fmt.Println("-----------------")
-
-	// greenRobot.MoveEast(newMap)
-	// fmt.Println(greenRobot)
-	// greenRobot.MoveWest(newMap)
-	// fmt.Println(greenRobot)
-	// greenRobot.MoveNorth(newMap)
-	// fmt.Println(greenRobot)
-	// greenRobot.MoveSouth(newMap)
-	// fmt.Println(greenRobot)
-
-	// fmt.Println(newMap[14][11])
-	// fmt.Println(newMap[12][11])
+	fmt.Println(depth)
 }
 
 func InitMapTile(newMap *[][]GameResources.GameTile) {
@@ -374,12 +242,18 @@ func SetDefaultRobot(newMap [][]GameResources.GameTile,
 	newMap[8][13].ExistRobot = true
 
 	yellowRobot.Color = COLOR_YELLOW
+	// yellowRobot.XPosition = 14
+	// yellowRobot.YPosition = 2
+	// newMap[14][2].ExistRobot = true
 	yellowRobot.XPosition = 14
-	yellowRobot.YPosition = 2
-	newMap[14][2].ExistRobot = true
+	yellowRobot.YPosition = 12
+	newMap[15][12].ExistRobot = true
 
 	greenRobot.Color = COLOR_GREEN
-	greenRobot.XPosition = 10
-	greenRobot.YPosition = 11
-	newMap[10][11].ExistRobot = true
+	// greenRobot.XPosition = 10
+	// greenRobot.YPosition = 11
+	// newMap[10][11].ExistRobot = true
+	greenRobot.XPosition = 11
+	greenRobot.YPosition = 12
+	newMap[11][12].ExistRobot = true
 }
