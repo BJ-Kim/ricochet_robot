@@ -1,0 +1,19 @@
+package Constants
+
+var COLOR_BLUE = "BLUE"
+var COLOR_RED = "RED"
+var COLOR_YELLOW = "YELLOW"
+var COLOR_GREEN = "GREEN"
+
+var TYPE_MOON = "MOON"
+var TYPE_STAR = "STAR"
+var TYPE_PLANET = "PLANET"
+var TYPE_TRIANGLE = "TRIANGLE"
+
+var DIRECTION_WEST = "WEST"
+var DIRECTION_EAST = "EAST"
+var DIRECTION_NORTH = "NORTH"
+var DIRECTION_SOUTH = "SOUTH"
+
+var TargetColor = COLOR_GREEN
+var TargetType = TYPE_PLANET

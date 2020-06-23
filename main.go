@@ -2,26 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/BJ-Kim/ricochet_robot/Constants"
 	"github.com/BJ-Kim/ricochet_robot/GameResources"
+	"time"
 )
-
-var COLOR_BLUE = "BLUE"
-var COLOR_RED = "RED"
-var COLOR_YELLOW = "YELLOW"
-var COLOR_GREEN = "GREEN"
-
-var TYPE_MOON = "MOON"
-var TYPE_STAR = "STAR"
-var TYPE_PLANET = "PLANET"
-var TYPE_TRIANGLE = "TRIANGLE"
-
-var DIRECTION_WEST = "WEST"
-var DIRECTION_EAST = "EAST"
-var DIRECTION_NORTH = "NORTH"
-var DIRECTION_SOUTH = "SOUTH"
-
-var TargetColor = COLOR_GREEN
-var TargetType = TYPE_MOON
 
 func main() {
 	var queue GameResources.Queue
@@ -35,58 +19,35 @@ func main() {
 	SetDestination(newMap)
 	SetDefaultRobot(newMap, &blueRobot, &redRobot, &yellowRobot, &greenRobot)
 
-	fmt.Println(TargetColor)
-	fmt.Println(TargetType)
-	/*
-		TODO: make node and push to queue
-	*/
-
-	var defaultChild []GameResources.Node
-	var startNode = GameResources.Node{0, blueRobot, redRobot, yellowRobot, greenRobot, newMap, nil, defaultChild, "", ""}
+	startTime := time.Now()
+	var startNode = GameResources.Node{0, blueRobot, redRobot, yellowRobot, greenRobot, newMap, nil, "", ""}
 	var node *GameResources.Node
 	var depth int
+	var count = 0
 	for {
-		findNode, moveCount := startNode.MoveRobots(&queue)
-		// fmt.Println(len(queue.Nodes))
-		// if count == 6 {
-		//     for i := 0; i < len(queue.Nodes); i++ {
-		//         queue.Nodes[i].PrintCurrentPosition()
-		//     }
-		// }
-		// if count == 6 {
-		//     queue.Nodes[0].PrintCurrentPosition()
-		//     fmt.Println("-------------------------------")
-		// }
-		// if count == 7 {
-		//     queue.Nodes[0].PrintCurrentPosition()
-		//     fmt.Println("-------------------------------")
-		// }
-		// if count == 8 {
-		//     queue.Nodes[0].PrintCurrentPosition()
-		//     fmt.Println("-------------------------------")
-		// }
-		// fmt.Println(findNode)
+		findNode, moveCount := startNode.MoveRobots(&queue, count)
 		if findNode != nil {
 			node = findNode
 			depth = moveCount
 			break
 		}
+		count++
 	}
-	fmt.Println(node.Depth)
-	// nn := node
-	// for {
-	//     fmt.Println("HISTORY")
-	//     fmt.Println(nn.BlueRobot.XPosition, nn.BlueRobot.YPosition)
-	//     fmt.Println(nn.RedRobot.XPosition, nn.RedRobot.YPosition)
-	//     fmt.Println(nn.YellowRobot.XPosition, nn.YellowRobot.YPosition)
-	//     fmt.Println(nn.GreenRobot.XPosition, nn.GreenRobot.YPosition)
-	//     if nn.ParentNode == nil {
-	//         fmt.Println("PARENT NIL")
-	//         break
-	//     }
-	//     nn = nn.ParentNode
-	// }
-	fmt.Println(depth)
+	nn := node
+	for {
+		fmt.Println("------------------HISTORY-----------------")
+		nn.PrintCurrentPosition()
+		if nn.ParentNode == nil {
+			fmt.Println("PARENT NIL")
+			break
+		}
+		nn = nn.ParentNode
+	}
+	endTime := time.Now()
+	fmt.Println("################################")
+	fmt.Println(endTime.Sub(startTime))
+	fmt.Println("DEPTH : ", depth)
+	fmt.Println("################################")
 }
 
 func InitMapTile(newMap *[][]GameResources.GameTile) {
@@ -159,68 +120,68 @@ func SetDestination(newMap [][]GameResources.GameTile) {
 	for i := 0; i < 16; i++ {
 		for j := 0; j < 16; j++ {
 			if i == 1 && j == 5 {
-				newMap[i][j].Color = COLOR_BLUE
-				newMap[i][j].Type = TYPE_MOON
+				newMap[i][j].Color = Constants.COLOR_BLUE
+				newMap[i][j].Type = Constants.TYPE_MOON
 			}
 			if i == 1 && j == 11 {
-				newMap[i][j].Color = COLOR_RED
-				newMap[i][j].Type = TYPE_MOON
+				newMap[i][j].Color = Constants.COLOR_RED
+				newMap[i][j].Type = Constants.TYPE_MOON
 			}
 			if i == 3 && j == 14 {
-				newMap[i][j].Color = COLOR_GREEN
-				newMap[i][j].Type = TYPE_TRIANGLE
+				newMap[i][j].Color = Constants.COLOR_GREEN
+				newMap[i][j].Type = Constants.TYPE_TRIANGLE
 			}
 			if i == 4 && j == 3 {
-				newMap[i][j].Color = COLOR_RED
-				newMap[i][j].Type = TYPE_STAR
+				newMap[i][j].Color = Constants.COLOR_RED
+				newMap[i][j].Type = Constants.TYPE_STAR
 			}
 			if i == 4 && j == 9 {
-				newMap[i][j].Color = COLOR_BLUE
-				newMap[i][j].Type = TYPE_PLANET
+				newMap[i][j].Color = Constants.COLOR_BLUE
+				newMap[i][j].Type = Constants.TYPE_PLANET
 			}
 			if i == 5 && j == 6 {
-				newMap[i][j].Color = COLOR_GREEN
-				newMap[i][j].Type = TYPE_PLANET
+				newMap[i][j].Color = Constants.COLOR_GREEN
+				newMap[i][j].Type = Constants.TYPE_PLANET
 			}
 			if i == 6 && j == 1 {
-				newMap[i][j].Color = COLOR_YELLOW
-				newMap[i][j].Type = TYPE_TRIANGLE
+				newMap[i][j].Color = Constants.COLOR_YELLOW
+				newMap[i][j].Type = Constants.TYPE_TRIANGLE
 			}
 			if i == 6 && j == 12 {
-				newMap[i][j].Color = COLOR_YELLOW
-				newMap[i][j].Type = TYPE_STAR
+				newMap[i][j].Color = Constants.COLOR_YELLOW
+				newMap[i][j].Type = Constants.TYPE_STAR
 			}
 			if i == 9 && j == 12 {
-				newMap[i][j].Color = COLOR_BLUE
-				newMap[i][j].Type = TYPE_STAR
+				newMap[i][j].Color = Constants.COLOR_BLUE
+				newMap[i][j].Type = Constants.TYPE_STAR
 			}
 			if i == 10 && j == 3 {
-				newMap[i][j].Color = COLOR_BLUE
-				newMap[i][j].Type = TYPE_TRIANGLE
+				newMap[i][j].Color = Constants.COLOR_BLUE
+				newMap[i][j].Type = Constants.TYPE_TRIANGLE
 			}
 			if i == 10 && j == 10 {
-				newMap[i][j].Color = COLOR_YELLOW
-				newMap[i][j].Type = TYPE_PLANET
+				newMap[i][j].Color = Constants.COLOR_YELLOW
+				newMap[i][j].Type = Constants.TYPE_PLANET
 			}
 			if i == 11 && j == 5 {
-				newMap[i][j].Color = COLOR_GREEN
-				newMap[i][j].Type = TYPE_STAR
+				newMap[i][j].Color = Constants.COLOR_GREEN
+				newMap[i][j].Type = Constants.TYPE_STAR
 			}
 			if i == 12 && j == 2 {
-				newMap[i][j].Color = COLOR_YELLOW
-				newMap[i][j].Type = TYPE_MOON
+				newMap[i][j].Color = Constants.COLOR_YELLOW
+				newMap[i][j].Type = Constants.TYPE_MOON
 			}
 			if i == 12 && j == 14 {
-				newMap[i][j].Color = COLOR_RED
-				newMap[i][j].Type = TYPE_TRIANGLE
+				newMap[i][j].Color = Constants.COLOR_RED
+				newMap[i][j].Type = Constants.TYPE_TRIANGLE
 			}
 			if i == 13 && j == 4 {
-				newMap[i][j].Color = COLOR_RED
-				newMap[i][j].Type = TYPE_PLANET
+				newMap[i][j].Color = Constants.COLOR_RED
+				newMap[i][j].Type = Constants.TYPE_PLANET
 			}
 			if i == 14 && j == 11 {
-				newMap[i][j].Color = COLOR_GREEN
-				newMap[i][j].Type = TYPE_MOON
+				newMap[i][j].Color = Constants.COLOR_GREEN
+				newMap[i][j].Type = Constants.TYPE_MOON
 			}
 		}
 	}
@@ -231,29 +192,19 @@ func SetDefaultRobot(newMap [][]GameResources.GameTile,
 	redRobot *GameResources.Robot,
 	yellowRobot *GameResources.Robot,
 	greenRobot *GameResources.Robot) {
-	blueRobot.Color = COLOR_BLUE
+	blueRobot.Color = Constants.COLOR_BLUE
 	blueRobot.XPosition = 1
-	blueRobot.YPosition = 1
-	newMap[1][1].ExistRobot = true
+	blueRobot.YPosition = 9
 
-	redRobot.Color = COLOR_RED
-	redRobot.XPosition = 8
+	redRobot.Color = Constants.COLOR_RED
+	redRobot.XPosition = 4
 	redRobot.YPosition = 13
-	newMap[8][13].ExistRobot = true
 
-	yellowRobot.Color = COLOR_YELLOW
-	// yellowRobot.XPosition = 14
-	// yellowRobot.YPosition = 2
-	// newMap[14][2].ExistRobot = true
+	yellowRobot.Color = Constants.COLOR_YELLOW
 	yellowRobot.XPosition = 14
-	yellowRobot.YPosition = 12
-	newMap[15][12].ExistRobot = true
+	yellowRobot.YPosition = 13
 
-	greenRobot.Color = COLOR_GREEN
-	// greenRobot.XPosition = 10
-	// greenRobot.YPosition = 11
-	// newMap[10][11].ExistRobot = true
-	greenRobot.XPosition = 11
-	greenRobot.YPosition = 12
-	newMap[11][12].ExistRobot = true
+	greenRobot.Color = Constants.COLOR_GREEN
+	greenRobot.XPosition = 12
+	greenRobot.YPosition = 3
 }
