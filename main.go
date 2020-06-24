@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/BJ-Kim/ricochet_robot/Constants"
 	"github.com/BJ-Kim/ricochet_robot/GameResources"
+	// "sync"
 	"time"
 )
 
@@ -22,17 +23,32 @@ func main() {
 	startTime := time.Now()
 	var startNode = GameResources.Node{0, blueRobot, redRobot, yellowRobot, greenRobot, newMap, nil, "", ""}
 	var node *GameResources.Node
-	var depth int
 	var count = 0
+	// var wg sync.WaitGroup
+	// messages := make(chan *GameResources.Node)
 	for {
-		findNode, moveCount := startNode.MoveRobots(&queue, count)
+		// wg.Add(1)
+
+		// go func() {
+		//     defer wg.Done()
+		//     messages <- startNode.MoveRobots(&queue, count)
+		// }()
+
+		findNode := startNode.MoveRobots(&queue, count)
 		if findNode != nil {
 			node = findNode
-			depth = moveCount
 			break
 		}
 		count++
 	}
+	// go func() {
+	//     for i := range messages {
+	//         fmt.Println("??????????????????????")
+	//         fmt.Println(i)
+	//         fmt.Println("??????????????????????")
+	//     }
+	// }()
+	// wg.Wait()
 	nn := node
 	for {
 		fmt.Println("------------------HISTORY-----------------")
@@ -46,7 +62,8 @@ func main() {
 	endTime := time.Now()
 	fmt.Println("################################")
 	fmt.Println(endTime.Sub(startTime))
-	fmt.Println("DEPTH : ", depth)
+	fmt.Println("COUNT : ", count)
+	fmt.Println("DEPTH : ", node.Depth)
 	fmt.Println("################################")
 }
 

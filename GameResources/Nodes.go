@@ -3,6 +3,7 @@ package GameResources
 import (
 	"fmt"
 	"github.com/BJ-Kim/ricochet_robot/Constants"
+	"sync"
 )
 
 type Queue struct {
@@ -50,7 +51,11 @@ func (node *Node) PrintCurrentPosition() {
 	fmt.Println("GREEN X:", node.GreenRobot.XPosition, "/ GREEN Y:", node.GreenRobot.YPosition)
 }
 
-func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
+func (node *Node) MoveRobotsGoroutine(queue *Queue, count int, wg *sync.WaitGroup) {
+	defer wg.Done()
+}
+
+func (node *Node) MoveRobots(queue *Queue, count int) *Node {
 	if len(queue.Nodes) != 0 {
 		node = queue.Pop()
 	}
@@ -61,7 +66,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_EAST
 		tempNode.MoveRobotColor = Constants.COLOR_GREEN
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -72,7 +77,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_WEST
 		tempNode.MoveRobotColor = Constants.COLOR_GREEN
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -83,7 +88,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_SOUTH
 		tempNode.MoveRobotColor = Constants.COLOR_GREEN
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -94,7 +99,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_NORTH
 		tempNode.MoveRobotColor = Constants.COLOR_GREEN
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -106,7 +111,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_EAST
 		tempNode.MoveRobotColor = Constants.COLOR_BLUE
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -117,7 +122,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_WEST
 		tempNode.MoveRobotColor = Constants.COLOR_BLUE
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -128,7 +133,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_SOUTH
 		tempNode.MoveRobotColor = Constants.COLOR_BLUE
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -139,7 +144,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_NORTH
 		tempNode.MoveRobotColor = Constants.COLOR_BLUE
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -151,7 +156,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_EAST
 		tempNode.MoveRobotColor = Constants.COLOR_RED
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -162,7 +167,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_WEST
 		tempNode.MoveRobotColor = Constants.COLOR_RED
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -173,7 +178,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_SOUTH
 		tempNode.MoveRobotColor = Constants.COLOR_RED
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -184,7 +189,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_NORTH
 		tempNode.MoveRobotColor = Constants.COLOR_RED
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -196,7 +201,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_EAST
 		tempNode.MoveRobotColor = Constants.COLOR_YELLOW
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -207,7 +212,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_WEST
 		tempNode.MoveRobotColor = Constants.COLOR_YELLOW
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -218,7 +223,7 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_SOUTH
 		tempNode.MoveRobotColor = Constants.COLOR_YELLOW
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
@@ -229,11 +234,11 @@ func (node *Node) MoveRobots(queue *Queue, count int) (*Node, int) {
 		tempNode.FromDirection = Constants.DIRECTION_NORTH
 		tempNode.MoveRobotColor = Constants.COLOR_YELLOW
 		if CheckGoal(tempNode) {
-			return &tempNode, tempNode.Depth
+			return &tempNode
 		}
 		queue.Push(tempNode)
 	}
-	return nil, 0
+	return nil
 }
 
 func CheckGoal(node Node) bool {
