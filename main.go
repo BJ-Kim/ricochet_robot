@@ -5,6 +5,9 @@ import (
 	"github.com/BJ-Kim/ricochet_robot/Constants"
 	"github.com/BJ-Kim/ricochet_robot/GameResources"
 	// "sync"
+	"fyne.io/fyne/app"
+	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/widget"
 	"time"
 )
 
@@ -19,6 +22,8 @@ func main() {
 	SetWall(newMap)
 	SetDestination(newMap)
 	SetDefaultRobot(newMap, &blueRobot, &redRobot, &yellowRobot, &greenRobot)
+
+	MakeMap(newMap)
 
 	startTime := time.Now()
 	var startNode = GameResources.Node{0, blueRobot, redRobot, yellowRobot, greenRobot, newMap, nil, "", ""}
@@ -224,4 +229,66 @@ func SetDefaultRobot(newMap [][]GameResources.GameTile,
 	greenRobot.Color = Constants.COLOR_GREEN
 	greenRobot.XPosition = 12
 	greenRobot.YPosition = 3
+}
+
+func MakeMap(newMap [][]GameResources.GameTile) {
+	a := app.New()
+	w := a.NewWindow("HELLO")
+
+	yArr := widget.NewVBox()
+
+	for _, arr := range newMap {
+		xArr := widget.NewHBox()
+		for _, t := range arr {
+			if t.North == true && t.West == true {
+				img := canvas.NewImageFromFile("./Images/tile_west_north_wall.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			} else if t.North == true && t.East == true {
+				img := canvas.NewImageFromFile("./Images/tile_north_east_wall.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			} else if t.South == true && t.East == true {
+				img := canvas.NewImageFromFile("./Images/tile_east_south_wall.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			} else if t.South == true && t.West == true {
+				img := canvas.NewImageFromFile("./Images/tile_west_south_wall.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			} else if t.South == true {
+				img := canvas.NewImageFromFile("./Images/tile_south_wall.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			} else if t.North == true {
+				img := canvas.NewImageFromFile("./Images/tile_north_wall.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			} else if t.East == true {
+				img := canvas.NewImageFromFile("./Images/tile_east_wall.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			} else if t.West == true {
+				img := canvas.NewImageFromFile("./Images/tile_west_wall.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			} else {
+				img := canvas.NewImageFromFile("./Images/tile_empty.png")
+				img.FillMode = canvas.ImageFillOriginal
+				xArr.Append(img)
+			}
+		}
+		yArr.Append(xArr)
+	}
+	aa := widget.NewVBox(
+		widget.NewLabel("HELL FYNE"),
+		widget.NewButton("QUIT", func() {
+			a.Quit()
+		}),
+	)
+
+	yArr.Append(aa)
+	w.SetContent(yArr)
+
+	w.ShowAndRun()
 }
