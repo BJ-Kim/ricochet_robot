@@ -1,16 +1,23 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"github.com/BJ-Kim/ricochet_robot/Constants"
 	"github.com/BJ-Kim/ricochet_robot/GameResources"
+	"github.com/BJ-Kim/ricochet_robot/GameUI"
 	// "sync"
+	"fyne.io/fyne"
 	"fyne.io/fyne/app"
-	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/widget"
-	"time"
+	// "math"
+	// "time"
 )
 
+// var NewApp fyne.App
+// var GameWindow fyne.Window
+// var AppContainer *widget.Box
+// var GameMap GameUI.Canvas
+//
 func main() {
 	var queue GameResources.Queue
 	var newMap [][]GameResources.GameTile
@@ -18,58 +25,128 @@ func main() {
 	var redRobot GameResources.Robot
 	var yellowRobot GameResources.Robot
 	var greenRobot GameResources.Robot
+	var GameDataInstance = GameUI.GetGameMapDataSingleton()
+	nodesInstance := GameResources.GetNodesSingleton()
 	InitMapTile(&newMap)
 	SetWall(newMap)
 	SetDestination(newMap)
 	SetDefaultRobot(newMap, &blueRobot, &redRobot, &yellowRobot, &greenRobot)
 
-	MakeMap(newMap)
-
-	startTime := time.Now()
 	var startNode = GameResources.Node{0, blueRobot, redRobot, yellowRobot, greenRobot, newMap, nil, "", ""}
-	var node *GameResources.Node
-	var count = 0
-	// var wg sync.WaitGroup
-	// messages := make(chan *GameResources.Node)
-	for {
-		// wg.Add(1)
+	// nodesInstance.CurrNode = startNode
+	nodesInstance.SetCurrNode(startNode)
+	// GameResources.CURR_NODE = startNode
+	MakeGameMap(startNode, newMap, &queue)
+	// ShowNodeState(startNode)
+	// startNode.ShowNodeState()
+	GameUI.ShowNodeState(&startNode)
 
-		// go func() {
-		//     defer wg.Done()
-		//     messages <- startNode.MoveRobots(&queue, count)
-		// }()
+	GameDataInstance.GameWindow.ShowAndRun()
 
-		findNode := startNode.MoveRobots(&queue, count)
-		if findNode != nil {
-			node = findNode
-			break
-		}
-		count++
-	}
-	// go func() {
-	//     for i := range messages {
-	//         fmt.Println("??????????????????????")
-	//         fmt.Println(i)
-	//         fmt.Println("??????????????????????")
+	// findNode := FindPath(startNode)
+	// fmt.Println(findNode.Depth)
+
+	// startTime := time.Now()
+	// var node *GameResources.Node
+	// var count = 0
+	// // var wg sync.WaitGroup
+	// // messages := make(chan *GameResources.Node)
+	// for {
+	//     // wg.Add(1)
+	//
+	//     // go func() {
+	//     //     defer wg.Done()
+	//     //     messages <- startNode.MoveRobots(&queue, count)
+	//     // }()
+	//
+	//     findNode := startNode.MoveRobots(&queue, count)
+	//     if findNode != nil {
+	//         node = findNode
+	//         break
 	//     }
-	// }()
-	// wg.Wait()
-	nn := node
-	for {
-		fmt.Println("------------------HISTORY-----------------")
-		nn.PrintCurrentPosition()
-		if nn.ParentNode == nil {
-			fmt.Println("PARENT NIL")
-			break
-		}
-		nn = nn.ParentNode
-	}
-	endTime := time.Now()
-	fmt.Println("################################")
-	fmt.Println(endTime.Sub(startTime))
-	fmt.Println("COUNT : ", count)
-	fmt.Println("DEPTH : ", node.Depth)
-	fmt.Println("################################")
+	//     count++
+	// }
+	// // go func() {
+	// //     for i := range messages {
+	// //         fmt.Println("??????????????????????")
+	// //         fmt.Println(i)
+	// //         fmt.Println("??????????????????????")
+	// //     }
+	// // }()
+	// // wg.Wait()
+	// nn := node
+	// for {
+	//     fmt.Println("------------------HISTORY-----------------")
+	//     nn.PrintCurrentPosition()
+	//     if nn.ParentNode == nil {
+	//         fmt.Println("PARENT NIL")
+	//         break
+	//     }
+	//     nn = nn.ParentNode
+	// }
+	// endTime := time.Now()
+	// fmt.Println("################################")
+	// fmt.Println(endTime.Sub(startTime))
+	// fmt.Println("COUNT : ", count)
+	// fmt.Println("DEPTH : ", node.Depth)
+	// fmt.Println("################################")
+}
+
+// func FindPath(startNode GameResources.Node) *GameResources.Node {
+//     startTime := time.Now()
+//     var node *GameResources.Node
+//     var count = 0
+//     // var wg sync.WaitGroup
+//     // messages := make(chan *GameResources.Node)
+//     for {
+//         // wg.Add(1)
+//
+//         // go func() {
+//         //     defer wg.Done()
+//         //     messages <- startNode.MoveRobots(&queue, count)
+//         // }()
+//
+//         findNode := startNode.MoveRobots(&queue, count)
+//         if findNode != nil {
+//             node = findNode
+//             break
+//         }
+//         count++
+//     }
+//     endTime := time.Now()
+//     fmt.Println("################################")
+//     fmt.Println(endTime.Sub(startTime))
+//     fmt.Println("################################")
+//     return node
+// }
+
+func MakeGameMap(node GameResources.Node, newMap [][]GameResources.GameTile, queue *GameResources.Queue) {
+	var GameDataInstance = GameUI.GetGameMapDataSingleton()
+	// newApp := app.New()
+	// window := newApp.NewWindow("Rico")
+	newApp := app.New()
+	gameWindow := newApp.NewWindow("Rico")
+
+	// mContainer := widget.NewHBox()
+	appContainer := widget.NewHBox()
+	gameMap := GameUI.NewCanvas("HELL", Constants.TILE_SIZE*len(newMap), Constants.TILE_SIZE*len(newMap))
+
+	GameDataInstance.NewApp = newApp
+	GameDataInstance.GameWindow = gameWindow
+	GameDataInstance.AppContainer = appContainer
+	GameDataInstance.GameMap = gameMap
+
+	GameUI.SetControlPannel(GameDataInstance.AppContainer, queue)
+	GameUI.SetGameMap(newMap, GameDataInstance.GameMap)
+	GameDataInstance.AppContainer.Append(GameDataInstance.GameMap.Container)
+
+	// ShowNodeState(node)
+
+	GameDataInstance.GameWindow.Resize(fyne.NewSize(int(800), int(500)))
+	// window.SetFixedSize(true)
+	// window.SetPadded(false)
+	GameDataInstance.GameWindow.SetContent(GameDataInstance.AppContainer)
+	// GameWindow.ShowAndRun()
 }
 
 func InitMapTile(newMap *[][]GameResources.GameTile) {
@@ -229,66 +306,4 @@ func SetDefaultRobot(newMap [][]GameResources.GameTile,
 	greenRobot.Color = Constants.COLOR_GREEN
 	greenRobot.XPosition = 12
 	greenRobot.YPosition = 3
-}
-
-func MakeMap(newMap [][]GameResources.GameTile) {
-	a := app.New()
-	w := a.NewWindow("HELLO")
-
-	yArr := widget.NewVBox()
-
-	for _, arr := range newMap {
-		xArr := widget.NewHBox()
-		for _, t := range arr {
-			if t.North == true && t.West == true {
-				img := canvas.NewImageFromFile("./Images/tile_west_north_wall.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			} else if t.North == true && t.East == true {
-				img := canvas.NewImageFromFile("./Images/tile_north_east_wall.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			} else if t.South == true && t.East == true {
-				img := canvas.NewImageFromFile("./Images/tile_east_south_wall.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			} else if t.South == true && t.West == true {
-				img := canvas.NewImageFromFile("./Images/tile_west_south_wall.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			} else if t.South == true {
-				img := canvas.NewImageFromFile("./Images/tile_south_wall.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			} else if t.North == true {
-				img := canvas.NewImageFromFile("./Images/tile_north_wall.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			} else if t.East == true {
-				img := canvas.NewImageFromFile("./Images/tile_east_wall.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			} else if t.West == true {
-				img := canvas.NewImageFromFile("./Images/tile_west_wall.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			} else {
-				img := canvas.NewImageFromFile("./Images/tile_empty.png")
-				img.FillMode = canvas.ImageFillOriginal
-				xArr.Append(img)
-			}
-		}
-		yArr.Append(xArr)
-	}
-	aa := widget.NewVBox(
-		widget.NewLabel("HELL FYNE"),
-		widget.NewButton("QUIT", func() {
-			a.Quit()
-		}),
-	)
-
-	yArr.Append(aa)
-	w.SetContent(yArr)
-
-	w.ShowAndRun()
 }

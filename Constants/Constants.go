@@ -17,3 +17,5 @@ var DIRECTION_SOUTH = "SOUTH"
 
 var TargetColor = COLOR_GREEN
 var TargetType = TYPE_PLANET
+
+var TILE_SIZE = 30

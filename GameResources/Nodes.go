@@ -3,21 +3,52 @@ package GameResources
 import (
 	"fmt"
 	"github.com/BJ-Kim/ricochet_robot/Constants"
+	// "github.com/BJ-Kim/ricochet_robot/GameUI"
 	"sync"
+	"time"
 )
+
+// var CURR_NODE Node
+// var RESULT_NODE *Node
+
+type nodes struct {
+	CurrNode   Node
+	ResultNode *Node
+}
+
+var instance *nodes
+var once sync.Once
+
+func GetNodesSingleton() *nodes {
+	once.Do(func() {
+		instance = &nodes{}
+	})
+	return instance
+}
+
+func (nds *nodes) SetCurrNode(node Node) {
+	nds.CurrNode = node
+}
+
+func (nds *nodes) SetResultNode(node *Node) {
+	nds.ResultNode = node
+}
 
 type Queue struct {
 	Nodes []Node
+	count int
 }
 
 func (queue *Queue) Push(node Node) {
-	queue.Nodes = append(queue.Nodes, node)
+	queue.Nodes = append(queue.Nodes[:queue.count], node)
+	queue.count++
 }
 
 func (queue *Queue) Pop() *Node {
 	var x Node
 	x = queue.Nodes[0]
 	queue.Nodes = queue.Nodes[1:]
+	queue.count--
 	return &x
 }
 
@@ -33,6 +64,83 @@ type Node struct {
 	MoveRobotColor string
 }
 
+func (node *Node) FindPath(queue *Queue) *Node {
+	startTime := time.Now()
+	var nd *Node
+	var count = 0
+	// var wg sync.WaitGroup
+	// messages := make(chan *GameResources.Node)
+	for {
+		// wg.Add(1)
+
+		// go func() {
+		//     defer wg.Done()
+		//     messages <- startNode.MoveRobots(&queue, count)
+		// }()
+
+		findNode := node.MoveRobots(queue, count)
+		if findNode != nil {
+			nd = findNode
+			break
+		}
+		count++
+	}
+	endTime := time.Now()
+	fmt.Println("################################")
+	fmt.Println(endTime.Sub(startTime))
+	fmt.Println("DEPTH : ", nd.Depth)
+	fmt.Println("################################")
+	return nd
+}
+
+// func (node *Node) ShowResult() {
+//     arr := []*Node{}
+//     nn := node
+//     for {
+//         fmt.Println("------------------HISTORY-----------------")
+//         nn.PrintCurrentPosition()
+//         if nn.ParentNode == nil {
+//             fmt.Println("PARENT NIL")
+//             break
+//         }
+//         nn = nn.ParentNode
+//         arr = append(arr, nn)
+//     }
+//
+//     for _, v := range arr {
+//         time.Sleep(1 * time.Second)
+//         v.ShowNodeState()
+//     }
+// }
+//
+// func (node *Node) ShowNodeState() {
+//     var GameDataInstance = GameUI.GetGameMapDataSingleton()
+//     GameDataInstance.GameMap.Image(
+//         float64(node.RedRobot.YPosition*Constants.TILE_SIZE)+4,
+//         float64(node.RedRobot.XPosition*Constants.TILE_SIZE)+4,
+//         Constants.TILE_SIZE-8, Constants.TILE_SIZE-8,
+//         "./Images/robot_r.png",
+//     )
+//     GameDataInstance.GameMap.Image(
+//         float64(node.BlueRobot.YPosition*Constants.TILE_SIZE)+4,
+//         float64(node.BlueRobot.XPosition*Constants.TILE_SIZE)+4,
+//         Constants.TILE_SIZE-8, Constants.TILE_SIZE-8,
+//         "./Images/robot_b.png",
+//     )
+//     GameDataInstance.GameMap.Image(
+//         float64(node.YellowRobot.YPosition*Constants.TILE_SIZE)+4,
+//         float64(node.YellowRobot.XPosition*Constants.TILE_SIZE)+4,
+//         Constants.TILE_SIZE-8, Constants.TILE_SIZE-8,
+//         "./Images/robot_y.png",
+//     )
+//     GameDataInstance.GameMap.Image(
+//         float64(node.GreenRobot.YPosition*Constants.TILE_SIZE)+4,
+//         float64(node.GreenRobot.XPosition*Constants.TILE_SIZE)+4,
+//         Constants.TILE_SIZE-8, Constants.TILE_SIZE-8,
+//         "./Images/robot_g.png",
+//     )
+// }
+//
 func (node *Node) IsExistRobot(x int, y int) bool {
 	if (node.BlueRobot.XPosition == x && node.BlueRobot.YPosition == y) ||
 		(node.RedRobot.XPosition == x && node.RedRobot.YPosition == y) ||
